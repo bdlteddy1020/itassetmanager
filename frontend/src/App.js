@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>IT Hardware Lifecycle App</h1>
+      <h1>IT Asset Manager App</h1>
 
       <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
         <ProcurementForm onCreated={loadAll} />

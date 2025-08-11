@@ -1,5 +1,5 @@
 {
-  "name": "hardware-lifecycle-backend",
+  "name": "it-asset-manager-app-backend",
   "version": "1.0.0",
   "description": "Backend for IT Asset Manager App",
   "main": "server.js",

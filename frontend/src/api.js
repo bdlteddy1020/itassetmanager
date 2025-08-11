@@ -1,29 +1,22 @@
 import axios from 'axios';
-const API_ROOT = 'http://localhost:5000/api';
 
-export const procurementAPI = {
-  list: () => axios.get(`${API_ROOT}/procurements`),
-  create: (data) => axios.post(`${API_ROOT}/procurements`, data),
-  approve: (id, payload) => axios.put(`${API_ROOT}/procurements/${id}/approve`, payload),
-  markDelivered: (id, payload) => axios.put(`${API_ROOT}/procurements/${id}/deliver`, payload)
-};
+const API = axios.create({
+  baseURL: process.env.REACT_APP_API_URL
+});
 
-export const hardwareAPI = {
-  create: (data) => axios.post(`${API_ROOT}/hardware`, data),
-  list: () => axios.get(`${API_ROOT}/hardware`),
-  assign: (id, payload) => axios.put(`${API_ROOT}/hardware/${id}/assign`, payload),
-  decommission: (id) => axios.put(`${API_ROOT}/hardware/${id}/decommission`)
-};
+// Procurement
+export const createProcurementRequest = (data) => API.post('/procurement', data);
+export const approveProcurementRequest = (id) => API.patch(`/procurement/${id}/approve`);
 
-export const supportAPI = {
-  create: (data) => axios.post(`${API_ROOT}/support`, data),
-  list: () => axios.get(`${API_ROOT}/support`),
-  update: (id, payload) => axios.put(`${API_ROOT}/support/${id}`, payload)
-};
+// Assets
+export const registerHardware = (data) => API.post('/assets', data);
+export const assignHardware = (id, userId) => API.patch(`/assets/${id}/assign`, { userId });
 
-export const bugAPI = {
-  create: (data) => axios.post(`${API_ROOT}/bugs`, data),
-  list: () => axios.get(`${API_ROOT}/bugs`),
-  update: (id, payload) => axios.put(`${API_ROOT}/bugs/${id}`, payload),
-  delete: (id) => axios.delete(`${API_ROOT}/bugs/${id}`)
-};
+// Tickets
+export const createSupportTicket = (data) => API.post('/tickets', data);
+
+// Bugs
+export const createBugReport = (data) => API.post('/bugs', data);
+export const resolveBug = (id) => API.patch(`/bugs/${id}/resolve`);
+
+export default API;
