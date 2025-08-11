@@ -1,7 +1,7 @@
 {
-  "name": "task-manager-backend",
+  "name": "hardware-lifecycle-backend",
   "version": "1.0.0",
-  "description": "Backend for Task Manager App",
+  "description": "Backend for IT Asset Manager App",
   "main": "server.js",
   "scripts": {
     "test": "mocha",
