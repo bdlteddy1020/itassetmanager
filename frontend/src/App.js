@@ -1,21 +1,55 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Profile from './pages/Profile';
-import Tasks from './pages/Tasks';
+import React, { useEffect, useState } from 'react';
+import ProcurementForm from './components/ProcurementForm';
+import ProcurementList from './components/ProcurementList';
+import HardwareRegistration from './components/HardwareRegistration';
+import HardwareList from './components/HardwareList';
+import SupportTickets from './components/SupportTickets';
+import BugTracker from './components/BugTracker';
+import { procurementAPI, hardwareAPI, supportAPI, bugAPI } from './api';
 
 function App() {
+  const [procurements, setProcurements] = useState([]);
+  const [hardware, setHardware] = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [bugs, setBugs] = useState([]);
+
+  const loadAll = async () => {
+    const [pRes, hRes, tRes, bRes] = await Promise.all([
+      procurementAPI.list(),
+      hardwareAPI.list(),
+      supportAPI.list(),
+      bugAPI.list()
+    ]);
+    setProcurements(pRes.data);
+    setHardware(hRes.data);
+    setTickets(tRes.data);
+    setBugs(bRes.data);
+  };
+
+  useEffect(() => { loadAll(); }, []);
+
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/tasks" element={<Tasks />} />
-      </Routes>
-    </Router>
+    <div style={{ padding: 20 }}>
+      <h1>IT Hardware Lifecycle App</h1>
+
+      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+        <ProcurementForm onCreated={loadAll} />
+        <ProcurementList procurements={procurements} onUpdated={loadAll} />
+      </section>
+
+      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+        <HardwareRegistration onCreated={loadAll} />
+        <HardwareList hardware={hardware} onUpdated={loadAll} />
+      </section>
+
+      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+        <SupportTickets tickets={tickets} onUpdated={loadAll} />
+      </section>
+
+      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+        <BugTracker bugs={bugs} onUpdated={loadAll} />
+      </section>
+    </div>
   );
 }
 
