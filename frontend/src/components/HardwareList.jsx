@@ -11,20 +11,6 @@ export default function HardwareList() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [hardwareToEdit, setHardwareToEdit] = useState(null); 
 
-  {/*
-  useEffect(() => {
-  const fetchHardware = async () => {
-    try {
-      const response = await hardwareAPI.list();
-      setHardwareList(response.data); // ✅ Store the list
-    } catch (error) {
-      console.error('Error fetching hardware list:', error);
-    }
-  };
-  fetchHardware();
-}, []);
-*/}
-
   // Fetch procurements on mount
   useEffect(() => {
     fetchProcurements();
