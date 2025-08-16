@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProcurementForm from './components/ProcurementForm';
 import ProcurementList from './components/ProcurementList';
-import HardwareRegistration from './components/HardwareRegistration';
 import HardwareList from './components/HardwareList';
 import SupportTickets from './components/SupportTickets';
 import BugTracker from './components/BugTracker';
@@ -38,17 +37,17 @@ function App() {
       </section>
 
       <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-        <HardwareRegistration onCreated={loadAll} />
+        
         <HardwareList hardware={hardware} onUpdated={loadAll} />
       </section>
-
+    {/*
       <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
         <SupportTickets tickets={tickets} onUpdated={loadAll} />
       </section>
 
       <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
         <BugTracker bugs={bugs} onUpdated={loadAll} />
-      </section>
+      </section>*/}
     </div>
   );
 }

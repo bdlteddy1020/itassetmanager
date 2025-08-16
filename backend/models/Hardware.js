@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const hardwareSchema = new mongoose.Schema({
   procurementId: { type: mongoose.Schema.Types.ObjectId, ref: 'Procurement' },
   assetTag: { type: String, unique: true, required: true },
+  name: { type: String, required: true },
   model: String,
   serial: String,
   purchaseDate: Date,
   warrantyExpiry: Date,
-  status: { type: String, enum: ['InStock','Assigned','Decommissioned'], default: 'InStock' },
-  assignedTo: String, // user name or id
+  status: { type: String, enum: ['Delivered', 'Unregistered', 'Registered'], default: 'Delivered' },
+  AssignedStatus: { type: String, enum: ['Available','Assigned','Decommissioned'], default: 'Available' },
+  assignedTo: String,
+  registeredBy: { type: String, required: true },
   department: String,
   location: String,
   createdAt: { type: Date, default: Date.now },
