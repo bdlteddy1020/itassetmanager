@@ -2,7 +2,6 @@
 import axios from './axiosConfig';
 
 // procurement API
-// procurement API
 export const procurementAPI = {
   list: () => axios.get('/procurements'),
   create: (data) => axios.post('/procurements', data),
@@ -12,6 +11,7 @@ export const procurementAPI = {
   delete: (id) => axios.delete(`/procurements/${id}`),
   getById: (id) => axios.get(`/procurements/${id}`)
 };
+
 
 
 // hardware API
