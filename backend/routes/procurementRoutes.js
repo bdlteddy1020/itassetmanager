@@ -1,16 +1,26 @@
+// routes/procurementRoutes.js
 const express = require('express');
+const {
+  createProcurement,
+  getProcurements,
+  getProcurementById,
+  deleteProcurement,
+  approveProcurement,
+  chargeToOrder,
+  markDelivered
+} = require('../controllers/procurementController');
+
 const router = express.Router();
-const ctrl = require('../controllers/procurementController');
 
 // CRUD
-router.post('/', ctrl.createProcurement);
-router.get('/', ctrl.getProcurements);
-router.get('/:id', ctrl.getProcurementById);
-router.delete('/:id', ctrl.deleteProcurement);
+router.post('/', createProcurement);
+router.get('/', getProcurements);
+router.get('/:id', getProcurementById);
+router.delete('/:id', deleteProcurement);
 
 // Status updates
-router.put('/:id/approve', ctrl.approveProcurement);
-router.post('/:id/order', ctrl.chargeToOrder);       
-router.put('/:id/deliver', ctrl.markDelivered);    
+router.put('/:id/approve', approveProcurement);
+router.post('/:id/order', chargeToOrder);       
+router.put('/:id/deliver', markDelivered);    
 
 module.exports = router;

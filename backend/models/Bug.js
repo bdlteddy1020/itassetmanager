@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const bugSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -7,4 +7,4 @@ const bugSchema = new mongoose.Schema({
   status: { type: String, enum: ['open', 'in progress', 'closed'], default: 'open' }
 });
 
-export default mongoose.model('Bug', bugSchema);
+module.exports = mongoose.model('Bug', bugSchema);

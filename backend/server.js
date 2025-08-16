@@ -1,31 +1,44 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import cors from 'cors';
+// server.js
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-import procurementRoutes from './routes/procurementRoutes.js';
-import hardwareRoutes from './routes/hardwareRoutes.js';
-import supportRoutes from './routes/supportRoutes.js';
-import bugRoutes from './routes/bugRoutes.js';
+const procurementRoutes = require('./routes/procurementRoutes');
+const hardwareRoutes = require('./routes/hardwareRoutes');
+const supportRoutes = require('./routes/supportRoutes');
+const bugRoutes = require('./routes/bugRoutes');
 
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+
+// CORS
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+
+// JSON body parser
 app.use(express.json());
 
+// MongoDB connection
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
-    app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => console.log(`🚀 Server running on port ${port}`));
   })
-  .catch(err => console.error(err));
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
+// Base route
 app.get('/', (req, res) => res.json({ status: 'ok' }));
 
-// Use modular routes
+// Modular routes
 app.use('/api/procurements', procurementRoutes);
 app.use('/api/hardware', hardwareRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/bugs', bugRoutes);
+
+module.exports = app;

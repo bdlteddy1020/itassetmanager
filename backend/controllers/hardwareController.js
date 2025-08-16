@@ -1,11 +1,9 @@
-import Hardware from '../models/Hardware.js';
-import Procurement from '../models/Procurement.js';
-import mongoose from 'mongoose';
+// controllers/hardwareController.js
+const Hardware = require('../models/Hardware');
+const Procurement = require('../models/Procurement');
+const mongoose = require('mongoose');
 
-
-
-
-export const listHardware = async (req, res) => {
+exports.listHardware = async (req, res) => {
   try {
     const hardware = await Hardware.find();
     res.json(hardware);
@@ -14,7 +12,7 @@ export const listHardware = async (req, res) => {
   }
 };
 
-export const createHardware = async (req, res) => {
+exports.createHardware = async (req, res) => {
   const {
     assetTag,
     name,
@@ -29,7 +27,6 @@ export const createHardware = async (req, res) => {
   } = req.body;
 
   try {
-    // Create hardware record
     const hardware = new Hardware({
       assetTag,
       name,
@@ -46,26 +43,22 @@ export const createHardware = async (req, res) => {
 
     await hardware.save();
 
-    // Update procurement status
     if (procurementId) {
       await Procurement.findByIdAndUpdate(procurementId, { status: 'Registered' });
     }
 
     res.status(201).json({ message: 'Hardware registered successfully', hardware });
   } catch (err) {
-  console.error('Create hardware error:', err);
-
-  // Send full error message to frontend
-  res.status(500).json({
-    error: err.message || 'Unknown server error',
-    stack: err.stack,
-    name: err.name
-  });
-}
-
+    console.error('Create hardware error:', err);
+    res.status(500).json({
+      error: err.message || 'Unknown server error',
+      stack: err.stack,
+      name: err.name
+    });
+  }
 };
 
-export const assignHardware = async (req, res) => {
+exports.assignHardware = async (req, res) => {
   try {
     const { id } = req.params;
     const updated = await Hardware.findByIdAndUpdate(id, { ...req.body, status: 'assigned' }, { new: true });
@@ -75,7 +68,7 @@ export const assignHardware = async (req, res) => {
   }
 };
 
-export const decommissionHardware = async (req, res) => {
+exports.decommissionHardware = async (req, res) => {
   try {
     const { id } = req.params;
     const updated = await Hardware.findByIdAndUpdate(id, { status: 'decommissioned' }, { new: true });
@@ -85,8 +78,7 @@ export const decommissionHardware = async (req, res) => {
   }
 };
 
-
-export const deleteHardware = async (req, res) => {
+exports.deleteHardware = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -100,12 +92,12 @@ export const deleteHardware = async (req, res) => {
     }
     res.json({ message: 'Hardware deleted successfully' });
   } catch (error) {
-    console.error('Delete error:', error); // Add this for debugging
+    console.error('Delete error:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-export const updateHardware = async (req, res) => {
+exports.updateHardware = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -124,7 +116,7 @@ export const updateHardware = async (req, res) => {
   }
 };
 
-export const getHardwareById = async (req, res) => {
+exports.getHardwareById = async (req, res) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

@@ -1,9 +1,10 @@
 const express = require('express');
-const router = express.Router();
-const ctrl = require('../controllers/supportController');
+const { createTicket, getTickets, updateTicket } = require('../controllers/supportController');
 
-router.post('/', ctrl.createTicket);
-router.get('/', ctrl.getTickets);
-router.put('/:id', ctrl.updateTicket);
+const router = express.Router();
+
+router.post('/', createTicket);
+router.get('/', getTickets);
+router.put('/:id', updateTicket);
 
 module.exports = router;

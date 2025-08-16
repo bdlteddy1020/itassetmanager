@@ -2,68 +2,50 @@ import React, { useEffect, useState } from 'react';
 import ProcurementForm from './components/ProcurementForm';
 import ProcurementList from './components/ProcurementList';
 import HardwareList from './components/HardwareList';
-import SupportTickets from './components/SupportTickets';
-import BugTracker from './components/BugTracker';
-import { procurementAPI, hardwareAPI, supportAPI, bugAPI } from './api';
+import { procurementAPI, hardwareAPI } from './api'; // remove supportAPI & bugAPI
 
 function App() {
   const [procurements, setProcurements] = useState([]);
   const [hardware, setHardware] = useState([]);
-  const [tickets, setTickets] = useState([]);
-  const [bugs, setBugs] = useState([]);
 
   const loadAll = async () => {
-    const [pRes, hRes, tRes, bRes] = await Promise.all([
+    const [pRes, hRes] = await Promise.all([
       procurementAPI.list(),
       hardwareAPI.list(),
-      supportAPI.list(),
-      bugAPI.list()
     ]);
     setProcurements(pRes.data);
     setHardware(hRes.data);
-    setTickets(tRes.data);
-    setBugs(bRes.data);
   };
 
   useEffect(() => { loadAll(); }, []);
 
   return (
-  <div style={{ padding: 20 }}>
-    <h1
-      style={{
-        fontSize: "2rem",
-        fontWeight: "600",
-        color: "#1e293b", // slate-800
-        textAlign: "center",
-        marginBottom: "20px",
-        paddingBottom: "10px",
-        borderBottom: "2px solid #3b82f6", // blue accent line
-        letterSpacing: "0.5px",
-      }}
-    >
-      IT Asset Manager App
-    </h1>
+    <div style={{ padding: 20 }}>
+      <h1
+        style={{
+          fontSize: "2rem",
+          fontWeight: "600",
+          color: "#1e293b",
+          textAlign: "center",
+          marginBottom: "20px",
+          paddingBottom: "10px",
+          borderBottom: "2px solid #3b82f6",
+          letterSpacing: "0.5px",
+        }}
+      >
+        IT Asset Manager App
+      </h1>
 
-    <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
-      <ProcurementForm onCreated={loadAll} />
-      <ProcurementList procurements={procurements} onUpdated={loadAll} />
-    </section>
+      <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
+        <ProcurementForm onCreated={loadAll} />
+        <ProcurementList procurements={procurements} onUpdated={loadAll} />
+      </section>
 
-    <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
-      <HardwareList hardware={hardware} onUpdated={loadAll} />
-    </section>
-
-    {/*
-    <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-      <SupportTickets tickets={tickets} onUpdated={loadAll} />
-    </section>
-
-    <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-      <BugTracker bugs={bugs} onUpdated={loadAll} />
-    </section>*/}
-  </div>
-);
-
+      <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
+        <HardwareList hardware={hardware} onUpdated={loadAll} />
+      </section>
+    </div>
+  );
 }
 
 export default App;

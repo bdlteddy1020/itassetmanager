@@ -1,3 +1,4 @@
+// controllers/procurementController.js
 const Procurement = require('../models/Procurement');
 const Hardware = require('../models/Hardware');
 
@@ -65,7 +66,6 @@ exports.markDelivered = async (req, res) => {
     );
     if (!p) return res.status(404).json({ error: 'Not found' });
 
-    // If hardware creation is requested
     if (req.body.createHardware && Array.isArray(req.body.hardwareItems)) {
       const created = [];
       for (const h of req.body.hardwareItems) {

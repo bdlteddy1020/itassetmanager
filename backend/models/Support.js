@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const supportSchema = new mongoose.Schema({
   issue: { type: String, required: true },
@@ -7,4 +7,4 @@ const supportSchema = new mongoose.Schema({
   dateReported: { type: Date, default: Date.now }
 });
 
-export default mongoose.model('Support', supportSchema);
+module.exports = mongoose.model('Support', supportSchema);

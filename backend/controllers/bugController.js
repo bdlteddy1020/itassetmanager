@@ -1,6 +1,6 @@
-import Bug from '../models/Bug.js';
+const Bug = require('../models/Bug');
 
-export const listBugs = async (req, res) => {
+const listBugs = async (req, res) => {
   try {
     const bugs = await Bug.find();
     res.json(bugs);
@@ -9,7 +9,7 @@ export const listBugs = async (req, res) => {
   }
 };
 
-export const createBug = async (req, res) => {
+const createBug = async (req, res) => {
   try {
     const bug = new Bug(req.body);
     const saved = await bug.save();
@@ -19,7 +19,7 @@ export const createBug = async (req, res) => {
   }
 };
 
-export const updateBug = async (req, res) => {
+const updateBug = async (req, res) => {
   try {
     const { id } = req.params;
     const updated = await Bug.findByIdAndUpdate(id, req.body, { new: true });
@@ -29,11 +29,18 @@ export const updateBug = async (req, res) => {
   }
 };
 
-export const deleteBug = async (req, res) => {
+const deleteBug = async (req, res) => {
   try {
     await Bug.findByIdAndDelete(req.params.id);
     res.json({ message: 'Bug deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+module.exports = {
+  listBugs,
+  createBug,
+  updateBug,
+  deleteBug
 };

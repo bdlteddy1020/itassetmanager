@@ -1,3 +1,4 @@
+// models/Hardware.js
 const mongoose = require('mongoose');
 
 const hardwareSchema = new mongoose.Schema({
@@ -8,7 +9,11 @@ const hardwareSchema = new mongoose.Schema({
   serial: String,
   purchaseDate: Date,
   warrantyExpiry: Date,
-  status: { type: String, enum: ['Available','Assigned','Decommissioned'], default: 'Available' },
+  status: { 
+    type: String, 
+    enum: ['Available', 'Assigned', 'Decommissioned'], 
+    default: 'Available' 
+  },
   AssignedStatus: String,
   assignedTo: String,
   registeredBy: { type: String, required: true },
@@ -25,4 +30,5 @@ const hardwareSchema = new mongoose.Schema({
   ]
 });
 
-module.exports = mongoose.model('Hardware', hardwareSchema);
+const Hardware = mongoose.model('Hardware', hardwareSchema);
+module.exports = Hardware;

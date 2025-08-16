@@ -1,3 +1,4 @@
+// models/Procurement.js
 const mongoose = require('mongoose');
 
 const procurementSchema = new mongoose.Schema({
@@ -6,7 +7,11 @@ const procurementSchema = new mongoose.Schema({
   department: String,
   requester: String,
   justification: String,
-  status: { type: String, enum: ['Pending','Approved','Ordered','Delivered'], default: 'Pending' },
+  status: { 
+    type: String, 
+    enum: ['Pending', 'Approved', 'Ordered', 'Delivered'], 
+    default: 'Pending' 
+  },
   createdAt: { type: Date, default: Date.now },
   approvedBy: String,
   orderedAt: Date,
@@ -14,4 +19,6 @@ const procurementSchema = new mongoose.Schema({
   linkedHardwareId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hardware' }
 });
 
-module.exports = mongoose.model('Procurement', procurementSchema);
+const Procurement = mongoose.model('Procurement', procurementSchema);
+
+module.exports = Procurement; // CommonJS export

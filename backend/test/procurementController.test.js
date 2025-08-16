@@ -2,6 +2,7 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const mongoose = require('mongoose');
+
 const { expect } = chai;
 
 const Procurement = require('../models/Procurement');
@@ -17,38 +18,26 @@ const {
 } = require('../controllers/procurementController');
 
 describe("Procurement Controller", () => {
-  afterEach(() => {
-    sinon.restore(); // cleanup after each test
-  });
+  afterEach(() => sinon.restore());
 
   describe("createProcurement", () => {
     it("should create a new procurement successfully", async () => {
-      const req = { body: { item: "Laptop", cost: 1200 } };
-      const saved = { _id: new mongoose.Types.ObjectId(), ...req.body };
+      const req = { body: { itemName: "Laptop", quantity: 1 } };
+      const saveStub = sinon.stub(Procurement.prototype, "save").resolvesThis();
 
-      const saveStub = sinon.stub(Procurement.prototype, "save").resolves(saved);
-
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.spy()
-      };
-
+      const res = { status: sinon.stub().returnsThis(), json: sinon.spy() };
       await createProcurement(req, res);
 
       expect(saveStub.calledOnce).to.be.true;
       expect(res.status.calledWith(201)).to.be.true;
-      expect(res.json.calledWith(saved)).to.be.true;
+      expect(res.json.calledWith(sinon.match.instanceOf(Procurement))).to.be.true;
     });
 
     it("should return 400 on error", async () => {
       const req = { body: {} };
-      sinon.stub(Procurement.prototype, "save").throws(new Error("Validation error"));
+      sinon.stub(Procurement.prototype, "save").rejects(new Error("Validation error"));
 
-      const res = {
-        status: sinon.stub().returnsThis(),
-        json: sinon.spy()
-      };
-
+      const res = { status: sinon.stub().returnsThis(), json: sinon.spy() };
       await createProcurement(req, res);
 
       expect(res.status.calledWith(400)).to.be.true;
@@ -57,8 +46,8 @@ describe("Procurement Controller", () => {
   });
 
   describe("getProcurements", () => {
-    it("should return all procurements", async () => {
-      const list = [{ item: "Mouse" }, { item: "Keyboard" }];
+    it("should return a list of procurements", async () => {
+      const list = [{ _id: new mongoose.Types.ObjectId(), itemName: "Laptop" }];
       sinon.stub(Procurement, "find").returns({ sort: sinon.stub().resolves(list) });
 
       const req = {};
@@ -72,109 +61,144 @@ describe("Procurement Controller", () => {
 
   describe("approveProcurement", () => {
     it("should approve a procurement", async () => {
-      const procurement = { _id: new mongoose.Types.ObjectId(), status: "Approved" };
-      sinon.stub(Procurement, "findByIdAndUpdate").resolves(procurement);
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: { approvedBy: "Admin" } };
+      const updated = { _id: req.params.id, status: "Approved" };
 
-      const req = { params: { id: procurement._id }, body: { approvedBy: "Admin" } };
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(updated);
+
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await approveProcurement(req, res);
 
-      expect(res.json.calledWith(procurement)).to.be.true;
+      expect(res.json.calledWith(updated)).to.be.true;
     });
 
-    it("should return 404 if not found", async () => {
+    it("should return 404 if procurement not found", async () => {
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
       sinon.stub(Procurement, "findByIdAndUpdate").resolves(null);
 
-      const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
-      const res = { status: sinon.stub().returnsThis(), json: sinon.spy() };
-
+      const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
       await approveProcurement(req, res);
 
       expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ error: 'Not found' })).to.be.true;
     });
   });
 
   describe("chargeToOrder", () => {
-    it("should set status to Ordered", async () => {
-      const procurement = { _id: new mongoose.Types.ObjectId(), status: "Ordered" };
-      sinon.stub(Procurement, "findByIdAndUpdate").resolves(procurement);
+    it("should mark procurement as ordered", async () => {
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: { orderedBy: "Admin" } };
+      const updated = { _id: req.params.id, status: "Ordered" };
 
-      const req = { params: { id: procurement._id }, body: { orderedBy: "Admin" } };
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(updated);
+
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await chargeToOrder(req, res);
 
-      expect(res.json.calledWith(procurement)).to.be.true;
+      expect(res.json.calledWith(updated)).to.be.true;
+    });
+
+    it("should return 404 if procurement not found", async () => {
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(null);
+
+      const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
+      await chargeToOrder(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ error: 'Not found' })).to.be.true;
     });
   });
 
   describe("markDelivered", () => {
-    it("should mark as delivered and create hardware if requested", async () => {
-      const procurement = { _id: new mongoose.Types.ObjectId(), save: sinon.stub().resolvesThis() };
-      sinon.stub(Procurement, "findByIdAndUpdate").resolves(procurement);
+    it("should mark procurement as delivered without hardware creation", async () => {
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: { deliveredBy: "Admin" } };
+      const updated = { _id: req.params.id, status: "Delivered" };
 
-      const hardwareStub = sinon.stub(Hardware.prototype, "save").resolves({ _id: new mongoose.Types.ObjectId() });
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(updated);
+
+      const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
+      await markDelivered(req, res);
+
+      expect(res.json.calledWith(updated)).to.be.true;
+    });
+
+    it("should create hardware items if requested", async () => {
+      const hwItems = [{ name: "Laptop" }];
+      const procurement = { _id: new mongoose.Types.ObjectId(), save: sinon.stub().resolvesThis() };
+
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(procurement);
+      const hwSaveStub = sinon.stub(Hardware.prototype, "save").resolvesThis();
 
       const req = {
         params: { id: procurement._id },
-        body: { deliveredBy: "Admin", createHardware: true, hardwareItems: [{ name: "Dell Laptop" }] }
+        body: { deliveredBy: "Admin", createHardware: true, hardwareItems: hwItems }
       };
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
 
       await markDelivered(req, res);
 
-      expect(hardwareStub.calledOnce).to.be.true;
+      expect(hwSaveStub.callCount).to.equal(hwItems.length);
+      expect(procurement.save.calledOnce).to.be.true;
       expect(res.json.calledOnce).to.be.true;
+      const response = res.json.firstCall.args[0];
+      expect(response).to.have.property("createdHardware");
+      expect(response).to.have.property("procurement");
+    });
+
+    it("should return 404 if procurement not found", async () => {
+      sinon.stub(Procurement, "findByIdAndUpdate").resolves(null);
+      const req = { params: { id: new mongoose.Types.ObjectId() }, body: {} };
+      const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
+
+      await markDelivered(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ error: 'Not found' })).to.be.true;
     });
   });
 
   describe("deleteProcurement", () => {
-    it("should delete procurement successfully", async () => {
-      sinon.stub(Procurement, "findByIdAndDelete").resolves({ _id: new mongoose.Types.ObjectId() });
+    it("should delete a procurement", async () => {
+      sinon.stub(Procurement, "findByIdAndDelete").resolves({});
 
       const req = { params: { id: new mongoose.Types.ObjectId() } };
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await deleteProcurement(req, res);
 
-      expect(res.json.calledWithMatch({ status: "ok" })).to.be.true;
+      expect(res.json.calledWith({ status: 'ok', message: 'Procurement deleted successfully' })).to.be.true;
     });
 
-    it("should return 404 if not found", async () => {
+    it("should return 404 if procurement not found", async () => {
       sinon.stub(Procurement, "findByIdAndDelete").resolves(null);
-
       const req = { params: { id: new mongoose.Types.ObjectId() } };
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await deleteProcurement(req, res);
 
       expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ error: 'Procurement not found' })).to.be.true;
     });
   });
 
   describe("getProcurementById", () => {
     it("should return a procurement by ID", async () => {
-      const procurement = { _id: new mongoose.Types.ObjectId(), item: "Monitor" };
+      const procurement = { _id: new mongoose.Types.ObjectId(), itemName: "Laptop" };
       sinon.stub(Procurement, "findById").resolves(procurement);
 
       const req = { params: { id: procurement._id } };
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await getProcurementById(req, res);
 
       expect(res.json.calledWith(procurement)).to.be.true;
     });
 
-    it("should return 404 if not found", async () => {
+    it("should return 404 if procurement not found", async () => {
       sinon.stub(Procurement, "findById").resolves(null);
-
       const req = { params: { id: new mongoose.Types.ObjectId() } };
       const res = { json: sinon.spy(), status: sinon.stub().returnsThis() };
-
       await getProcurementById(req, res);
 
       expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ error: 'Not found' })).to.be.true;
     });
   });
 });

@@ -1,5 +1,5 @@
-import express from 'express';
-import { listBugs, createBug, updateBug, deleteBug } from '../controllers/bugController.js';
+const express = require('express');
+const { listBugs, createBug, updateBug, deleteBug } = require('../controllers/bugController');
 
 const router = express.Router();
 
@@ -8,4 +8,4 @@ router.post('/', createBug);
 router.put('/:id', updateBug);
 router.delete('/:id', deleteBug);
 
-export default router;
+module.exports = router;
