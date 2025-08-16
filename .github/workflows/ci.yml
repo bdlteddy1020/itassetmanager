@@ -46,6 +46,8 @@ jobs:
           npm install --global yarn
           yarn --version
           yarn install
+          npm install --save-dev @babel/plugin-proposal-private-property-in-object
+          yarn add --dev @babel/plugin-proposal-private-property-in-object
 
       # Install dependencies for frontend
       - name: Install Frontend Dependencies
