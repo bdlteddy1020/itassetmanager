@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const procurementSchema = new mongoose.Schema({
   itemName: { type: String, required: true },
@@ -14,4 +14,4 @@ const procurementSchema = new mongoose.Schema({
   linkedHardwareId: { type: mongoose.Schema.Types.ObjectId, ref: 'Hardware' }
 });
 
-export default mongoose.model('Procurement', procurementSchema);
+module.exports = mongoose.model('Procurement', procurementSchema);

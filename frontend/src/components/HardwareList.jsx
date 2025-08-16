@@ -7,10 +7,11 @@ export default function HardwareList() {
   const [loadingId, setLoadingId] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedHardwareItem, setSelectedHardwareItem] = useState(null);
-  const [hardwareList, setHardwareList] = useState([]);
+  //const [hardwareList, setHardwareList] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [hardwareToEdit, setHardwareToEdit] = useState(null); 
 
+  {/*
   useEffect(() => {
   const fetchHardware = async () => {
     try {
@@ -22,7 +23,7 @@ export default function HardwareList() {
   };
   fetchHardware();
 }, []);
-
+*/}
 
   // Fetch procurements on mount
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function HardwareList() {
       serial: `AUTO-${Math.floor(Math.random() * 100000)}`,
       department: item.department,
       registeredBy: 'IT Admin',
-      status: 'available',
+      status: 'Available',
       assignedTo: '',
       purchaseDate: new Date(),
       warrantyExpiry: null,
@@ -119,7 +120,7 @@ const handleView = async (item) => {
   return (
     <div style={{ padding: '16px' }}>
       <h1 style={{ marginBottom: '8px', color: '#1D4ED8', fontSize: '1.2rem', fontWeight: '600' }}>
-          Hardware Registration
+          Hardware Registration and Assignment
       </h1>
 
       {/* Delivered & Registered Items Table */}

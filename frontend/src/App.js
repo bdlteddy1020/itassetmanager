@@ -28,28 +28,42 @@ function App() {
   useEffect(() => { loadAll(); }, []);
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>IT Asset Manager App</h1>
+  <div style={{ padding: 20 }}>
+    <h1
+      style={{
+        fontSize: "2rem",
+        fontWeight: "600",
+        color: "#1e293b", // slate-800
+        textAlign: "center",
+        marginBottom: "20px",
+        paddingBottom: "10px",
+        borderBottom: "2px solid #3b82f6", // blue accent line
+        letterSpacing: "0.5px",
+      }}
+    >
+      IT Asset Manager App
+    </h1>
 
-      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-        <ProcurementForm onCreated={loadAll} />
-        <ProcurementList procurements={procurements} onUpdated={loadAll} />
-      </section>
+    <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
+      <ProcurementForm onCreated={loadAll} />
+      <ProcurementList procurements={procurements} onUpdated={loadAll} />
+    </section>
 
-      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-        
-        <HardwareList hardware={hardware} onUpdated={loadAll} />
-      </section>
+    <section style={{ border: "1px solid #ddd", padding: 12, marginBottom: 12 }}>
+      <HardwareList hardware={hardware} onUpdated={loadAll} />
+    </section>
+
     {/*
-      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-        <SupportTickets tickets={tickets} onUpdated={loadAll} />
-      </section>
+    <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+      <SupportTickets tickets={tickets} onUpdated={loadAll} />
+    </section>
 
-      <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
-        <BugTracker bugs={bugs} onUpdated={loadAll} />
-      </section>*/}
-    </div>
-  );
+    <section style={{ border: '1px solid #ddd', padding: 12, marginBottom: 12 }}>
+      <BugTracker bugs={bugs} onUpdated={loadAll} />
+    </section>*/}
+  </div>
+);
+
 }
 
 export default App;
