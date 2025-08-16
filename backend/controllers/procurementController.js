@@ -1,6 +1,7 @@
-import Procurement from '../models/Procurement.js';
+const Procurement = require('../models/Procurement');
+const Hardware = require('../models/Hardware');
 
-export const listProcurements = async (req, res) => {
+exports.createProcurement = async (req, res) => {
   try {
     const p = new Procurement(req.body);
     await p.save();
@@ -15,9 +16,7 @@ exports.getProcurements = async (req, res) => {
   res.json(list);
 };
 
-
-
-export const approveProcurement = async (req, res) => {
+exports.approveProcurement = async (req, res) => {
   try {
     const p = await Procurement.findByIdAndUpdate(
       req.params.id,
@@ -53,7 +52,7 @@ exports.chargeToOrder = async (req, res) => {
   }
 };
 
-export const deliverProcurement = async (req, res) => {
+exports.markDelivered = async (req, res) => {
   try {
     const p = await Procurement.findByIdAndUpdate(
       req.params.id,
@@ -106,5 +105,3 @@ exports.getProcurementById = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
-
