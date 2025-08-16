@@ -9,10 +9,6 @@ jobs:
   test:
     name: Run Tests
     runs-on: [self-hosted, linux, x64]
-    steps:
-      - name: Check runner details
-        run: |
-          echo "Running on EC2 self-hosted runner"
 
     strategy:
       matrix:
@@ -21,6 +17,10 @@ jobs:
     environment: MONGO_URI
 
     steps:
+
+      - name: Check runner details
+        run: |
+          echo "Running on EC2 self-hosted runner"
       - name: Checkout Code
         uses: actions/checkout@v3
 
